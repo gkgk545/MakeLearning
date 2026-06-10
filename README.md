@@ -59,7 +59,19 @@ make-learn/
 
 ## 설치
 
-Claude Code 스킬 디렉터리에 클론합니다.
+### npm (권장)
+
+Node.js 16 이상이 필요합니다. GitHub에서 직접 전역 설치합니다.
+
+```bash
+npm install -g github:gkgk545/MakeLearning
+```
+
+`postinstall` 스크립트가 스킬 파일을 `~/.claude/skills/make-learn/`에 자동으로 복사합니다.
+
+업데이트할 때도 동일한 명령을 실행하면 됩니다.
+
+### git clone (수동)
 
 ```bash
 git clone https://github.com/gkgk545/MakeLearning.git ~/.claude/skills/make-learn
