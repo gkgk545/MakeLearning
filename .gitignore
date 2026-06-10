@@ -1,0 +1,6 @@
+.DS_Store
+*.html
+gdrive_db/
+PLAN.md
+harness/output/
+reference/
