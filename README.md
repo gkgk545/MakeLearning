@@ -28,7 +28,17 @@ npm install -g github:gkgk545/MakeLearning
 
 ### 방법 2 — 설치 스크립트
 
-저장소를 내려받은(ZIP 또는 clone) 폴더에서:
+먼저 저장소를 내려받습니다. 둘 중 편한 방법으로:
+
+```bash
+# git이 있는 경우
+git clone https://github.com/gkgk545/MakeLearning.git
+cd MakeLearning
+```
+
+또는 GitHub 페이지에서 초록색 **Code** 버튼 → **Download ZIP**으로 받아 압축을 풀고, 그 폴더로 이동합니다.
+
+이어서 설치 스크립트를 실행합니다:
 
 ```bash
 # macOS / Linux
