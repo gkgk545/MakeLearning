@@ -4,10 +4,10 @@ const path = require('path');
 const os = require('os');
 
 const SKILL_NAME = 'make-learn';
-const SKILL_FILES = ['SKILL.md', 'README.md'];
+const SKILL_FILES = ['SKILL.md'];
 const SKILL_DIRS = ['core'];
 
-const sourceDir = path.join(__dirname, '..');
+const sourceDir = path.join(__dirname, '..', 'skill', 'make-learn');
 const targetDir = path.join(os.homedir(), '.claude', 'skills', SKILL_NAME);
 
 function copyDir(src, dest) {

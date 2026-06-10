@@ -5,7 +5,6 @@ $ErrorActionPreference = "Stop"
 
 $SrcDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $SkillSrc = Join-Path $SrcDir "skill\make-learn"
-$WorkflowSrc = Join-Path $SrcDir "adapters\antigravity\make-learn.md"
 $Home_ = $env:USERPROFILE
 
 if (-not (Test-Path (Join-Path $SkillSrc "SKILL.md"))) {
@@ -15,7 +14,7 @@ if (-not (Test-Path (Join-Path $SkillSrc "SKILL.md"))) {
 
 Write-Host "📦 make-learn 스킬을 설치합니다..."
 
-# 1) 공용 본체 (Antigravity 워크플로우가 참조)
+# 1) 공용 본체
 $dest = Join-Path $Home_ ".make-learn"
 New-Item -ItemType Directory -Force -Path $dest | Out-Null
 Copy-Item -Recurse -Force "$SkillSrc\*" $dest
@@ -30,17 +29,17 @@ $dest = Join-Path $Home_ ".codex\skills\make-learn"
 New-Item -ItemType Directory -Force -Path $dest | Out-Null
 Copy-Item -Recurse -Force "$SkillSrc\*" $dest
 
-# 4) Antigravity 전역 워크플로우
-$dest = Join-Path $Home_ ".gemini\antigravity\global_workflows"
+# 4) Antigravity 스킬
+$dest = Join-Path $Home_ ".gemini\antigravity\skills\make-learn"
 New-Item -ItemType Directory -Force -Path $dest | Out-Null
-Copy-Item -Force $WorkflowSrc (Join-Path $dest "make-learn.md")
+Copy-Item -Recurse -Force "$SkillSrc\*" $dest
 
 Write-Host ""
 Write-Host "✅ 설치 완료!"
 Write-Host "   공용 본체        → $Home_\.make-learn\"
 Write-Host "   Claude Code      → $Home_\.claude\skills\make-learn\  (호출: /make-learn)"
 Write-Host "   Codex            → $Home_\.codex\skills\make-learn\"
-Write-Host "   Antigravity      → $Home_\.gemini\antigravity\global_workflows\make-learn.md"
+Write-Host "   Antigravity      → $Home_\.gemini\antigravity\skills\make-learn\  (호출: /make-learn)"
 Write-Host ""
 Write-Host "사용 중인 프로그램(Claude Code / Codex / Antigravity)을 다시 시작한 뒤,"
 Write-Host "채팅창에 /make-learn 을 입력하고 학습자료를 함께 올려보세요."
