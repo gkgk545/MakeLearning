@@ -10,6 +10,10 @@
 
 ## 빠른 시작
 
+### 설치 스크립트 (권장 — 3개 플랫폼 동시 설치)
+
+저장소를 내려받은(ZIP 또는 clone) 폴더에서:
+
 ```bash
 # macOS / Linux
 bash install.sh
@@ -17,6 +21,18 @@ bash install.sh
 # Windows (PowerShell)
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
+
+Claude Code · Codex · Antigravity 세 곳에 한 번에 설치됩니다.
+
+### npm (Claude Code만 사용하는 경우)
+
+Node.js 16 이상이 필요합니다.
+
+```bash
+npm install -g github:gkgk545/MakeLearning
+```
+
+`postinstall` 스크립트가 스킬을 `~/.claude/skills/make-learn/`에 자동으로 복사합니다. 업데이트할 때도 같은 명령을 실행하면 됩니다. (Codex·Antigravity에는 설치되지 않으니, 함께 쓰신다면 위 설치 스크립트를 이용하세요.)
 
 설치 후 사용 중인 프로그램을 재시작하고 `/make-learn` + 학습자료를 입력하세요. 자세한 안내(비개발자용): [docs/INSTALL.md](docs/INSTALL.md)
 
@@ -39,16 +55,14 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 ## 저장소 구조
 
 ```
-skill/make-learn/     스킬 본체 (SKILL.md + core 지침·게임 패턴 7종)
-adapters/antigravity/ Antigravity 전역 워크플로우
+skill/make-learn/     스킬 본체 (SKILL.md + core 지침·게임 패턴 7종) — 단일 진실 공급원
 harness/              품질 검증 하네스 (교과별 샘플 자료 6종, 합격 기준, 테스트 절차)
 docs/INSTALL.md       선생님용 설치 가이드
 install.sh / .ps1     설치 스크립트 (Claude·Codex·Antigravity 동시 설치)
-PLAN.md               설계 결정 기록
+scripts/install.js    npm postinstall 스크립트 (Claude Code 전용 설치)
 ```
 
 ## 개발·기여
 
 - 스킬 지침 수정 시: `skill/make-learn/core/`가 단일 진실 공급원입니다. 수정 후 `harness/test-protocol.md` 절차로 회귀 확인을 해주세요.
 - 게임 품질 기준: `skill/make-learn/core/verify-rubric.md` + `harness/acceptance.md`
-- `reference/kingmath`는 설계 패턴 참고용입니다 (CC BY-NC 4.0 — 코드 직접 복사 금지, 본 스킬은 패턴만 학습해 자체 템플릿 사용).
