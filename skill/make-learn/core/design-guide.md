@@ -60,6 +60,50 @@ const GAME_DATA = {
 
 **패턴 문서의 스키마는 전체 옵션 카탈로그다.** 해당 게임의 variant가 실제로 사용하는 필드만 GAME_DATA에 포함한다 (예: 분류형이면 `steps` 제외, 4지선다면 OX용 필드 제외). 미사용 필드를 넣으면 검증 B6에서 불합격된다.
 
+### 3-1. 문항 데이터 안전장치 (필수)
+
+교사가 메모장으로 문항을 고치다 따옴표·쉼표를 지우면 문법 오류가 나고, 그러면 화면이 통째로 백지가 되어 교사가 패닉에 빠진다. 이를 막는 안전장치를 **반드시** 탑재한다.
+
+**핵심 원칙 — 데이터와 로직을 별도 `<script>` 태그로 분리한다.** GAME_DATA와 게임 로직을 같은 `<script>` 블록에 두면, 데이터 부분에 문법 오류가 났을 때 그 블록 전체(안전장치 코드 포함)가 실행되지 않아 아무것도 못 잡는다. 다음 3개 스크립트를 **이 순서로, `</body>` 직전에** 배치한다 (head에 두면 오류 표시 시점에 `document.body`가 없어 동작하지 않는다):
+
+```html
+<!-- ❶ 오류 안전장치 — 다른 어떤 스크립트보다 먼저 둔다 -->
+<script>
+  window.onerror = function (msg, src, line) {
+    var hint = line ? ` (파일 약 ${line}번째 줄 근처를 확인하세요)` : '';
+    document.body.innerHTML =
+      '<div style="max-width:560px;margin:40px auto;padding:24px;' +
+      "font-family:'Noto Sans KR','Malgun Gothic',sans-serif;background:#FFF0F0;" +
+      'border:3px solid #FF5555;border-radius:12px;color:#333;line-height:1.6;">' +
+      '<h2 style="color:#CC0000;margin-top:0;">⚠️ 문항을 불러오지 못했어요</h2>' +
+      '<p>메모장으로 문항을 고치는 과정에서 <b>따옴표(")</b>나 <b>쉼표(,)</b>가 ' +
+      '지워졌을 가능성이 높아요.' + hint + '</p>' +
+      '<p style="font-size:14px;color:#666;">파일을 다시 열어 수정 구역의 따옴표·쉼표를 ' +
+      '확인한 뒤 저장하고, 아래 버튼을 눌러주세요.</p>' +
+      '<button onclick="location.reload()" style="padding:10px 18px;background:#CC0000;' +
+      'color:#fff;border:none;border-radius:6px;font-size:15px;cursor:pointer;">다시 불러오기</button>' +
+      '</div>';
+    return true;  // 기본 오류 처리(백지 화면) 억제
+  };
+</script>
+
+<!-- ❷ 문항 데이터 — 반드시 별도 태그. 여기서 문법 오류가 나도 ❶이 줄 번호와 함께 잡아낸다 -->
+<script>
+  const GAME_DATA = { /* 위 "문항 수정 구역" 그대로 */ };
+</script>
+
+<!-- ❸ 게임 로직 — 데이터 누락(전역 미정의)도 한 번 더 방어 -->
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    if (typeof GAME_DATA === 'undefined') throw new Error('GAME_DATA를 읽지 못했습니다.');
+    initApp();  // 게임 초기화 진입점
+  });
+</script>
+```
+
+- `window.onerror`를 가장 먼저 등록해야 ❷의 **파싱 단계 문법 오류**까지 잡는다(try-catch는 파싱 오류를 못 잡는다 — 이 점이 핵심).
+- ❸의 `typeof` 검사는 데이터 스크립트가 통째로 실패해 GAME_DATA 자체가 정의되지 않은 경우에 대한 이중 방어다.
+
 ## 4. 학교급별 디자인 톤
 
 2단계에서 파악한 학교급에 따라 자동 적용한다.
@@ -133,5 +177,44 @@ button { touch-action: manipulation; cursor: pointer; }  /* 더블탭 줌 방지
 - 화면 전환은 섹션 show/hide 방식 (SPA 라우터 불필요).
 - **요소 표시/숨김은 CSS 클래스 토글(`classList.add/remove("hidden")`)로 통일한다.** `el.style.display = ""`로 '복원'하는 방식은 스타일시트에 `display: none`이 선언된 요소에서 동작하지 않는다(인라인이 비면 스타일시트 규칙이 되살아남) — 실제 진행 불가 버그의 단골 원인이므로 금지.
 - 고정 위치(absolute) UI 요소(사운드 버튼 등)는 다른 화면의 같은 자리 요소와 겹치지 않는지 모든 화면 기준으로 확인한다.
-- 효과음이 필요하면 Web Audio API로 간단한 비프음 생성 (외부 오디오 파일 금지). 소리 켬/끔 버튼 제공.
+- 효과음이 필요하면 Web Audio API로 간단한 비프음 생성 (외부 오디오 파일 금지). 소리 켬/끔 버튼 제공. **아래 표준 사운드 유틸을 그대로 포함해 쓴다** — 게임마다 볼륨·주파수가 제각각이 되어 학생에게 소음으로 들리는 것을 막기 위함이다. (정답·오답·클릭만 쓰면 충분하고, 더 필요한 경우만 type를 추가한다.)
+
+```javascript
+const SoundEffect = {
+  enabled: true,
+  ctx: null,
+  play(type) {
+    if (!this.enabled) return;
+    try {
+      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.state === 'suspended') this.ctx.resume();  // 첫 사용자 조작 후 활성화
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.connect(gain); gain.connect(this.ctx.destination);
+      const now = this.ctx.currentTime;
+      if (type === 'correct') {            // 정답: 도-미-솔 상승음
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.1);
+        osc.frequency.setValueAtTime(783.99, now + 0.2);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.start(now); osc.stop(now + 0.4);
+      } else if (type === 'wrong') {       // 오답: 낮게 떨어지는 경고음
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+        osc.start(now); osc.stop(now + 0.35);
+      } else {                              // 클릭: 짧은 탭음
+        osc.frequency.setValueAtTime(600, now);
+        gain.gain.setValueAtTime(0.07, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+        osc.start(now); osc.stop(now + 0.08);
+      }
+    } catch (e) { /* 오디오 미지원 환경에서도 게임은 계속 동작 */ }
+  }
+};
+// 사용: SoundEffect.play('correct') / .play('wrong') / .play('click')
+// 켬/끔 버튼: SoundEffect.enabled = !SoundEffect.enabled
+```
 - 전체 분량 목표: 600~1,200줄. 과한 기능보다 핵심 규칙의 완성도에 집중한다.
