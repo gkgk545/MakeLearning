@@ -61,7 +61,7 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 ## 사용 예시
 
 ```
-초등 5학년 과학 "식물의 구조와 기능" 학습지를 첨부합니다.
+/make-learn 초등 5학년 과학 "식물의 구조와 기능" 학습지를 첨부합니다.
 이걸로 복습 게임 만들어줘.
 ```
 
