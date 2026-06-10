@@ -4,11 +4,15 @@ const path = require('path');
 const os = require('os');
 
 const SKILL_NAME = 'make-learn';
-const SKILL_FILES = ['SKILL.md'];
-const SKILL_DIRS = ['core'];
+const sourceDir = path.join(__dirname, '..', 'skill', SKILL_NAME);
 
-const sourceDir = path.join(__dirname, '..', 'skill', 'make-learn');
-const targetDir = path.join(os.homedir(), '.claude', 'skills', SKILL_NAME);
+// install.sh / install.ps1 과 동일한 설치 대상
+const targets = [
+  { label: '공용 본체  ', dir: path.join(os.homedir(), '.make-learn') },
+  { label: 'Claude Code', dir: path.join(os.homedir(), '.claude', 'skills', SKILL_NAME) },
+  { label: 'Codex      ', dir: path.join(os.homedir(), '.codex', 'skills', SKILL_NAME) },
+  { label: 'Antigravity', dir: path.join(os.homedir(), '.gemini', 'antigravity', 'skills', SKILL_NAME) },
+];
 
 function copyDir(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
@@ -23,17 +27,14 @@ function copyDir(src, dest) {
   }
 }
 
-fs.mkdirSync(targetDir, { recursive: true });
-
-for (const file of SKILL_FILES) {
-  const src = path.join(sourceDir, file);
-  if (fs.existsSync(src)) {
-    fs.copyFileSync(src, path.join(targetDir, file));
-  }
+if (!fs.existsSync(path.join(sourceDir, 'SKILL.md'))) {
+  console.error(`skill/${SKILL_NAME}/SKILL.md 를 찾을 수 없습니다.`);
+  process.exit(1);
 }
 
-for (const dir of SKILL_DIRS) {
-  copyDir(path.join(sourceDir, dir), path.join(targetDir, dir));
+for (const { label, dir } of targets) {
+  copyDir(sourceDir, dir);
+  console.log(`${label} → ${dir}`);
 }
 
-console.log(`make-learn skill installed → ${targetDir}`);
+console.log('\nmake-learn 설치 완료. 사용 중인 프로그램을 재시작한 뒤 /make-learn 을 입력하세요.');
