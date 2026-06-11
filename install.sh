@@ -29,10 +29,22 @@ mkdir -p "$HOME/.codex/skills/make-learn"
 cp -R "$SKILL_SRC/." "$HOME/.codex/skills/make-learn/"
 installed+=("Codex            → ~/.codex/skills/make-learn/   (호출: /make-learn 또는 \$make-learn)")
 
-# 4) Antigravity 스킬
-mkdir -p "$HOME/.gemini/antigravity/skills/make-learn"
-cp -R "$SKILL_SRC/." "$HOME/.gemini/antigravity/skills/make-learn/"
-installed+=("Antigravity      → ~/.gemini/antigravity/skills/make-learn/  (호출: /make-learn)")
+# 4) Antigravity (Gemini) 플러그인
+#    ~/.gemini/config/plugins/<플러그인>/ 아래에서 로드되므로, plugin.json 으로 등록하고
+#    스킬은 skills/<스킬>/ 하위에 둔다. plugin.json 은 반드시 BOM 없는 표준 UTF-8 로 기록한다.
+PLUGIN_ROOT="$HOME/.gemini/config/plugins/make-learn-plugin"
+mkdir -p "$PLUGIN_ROOT/skills/make-learn"
+cp -R "$SKILL_SRC/." "$PLUGIN_ROOT/skills/make-learn/"
+# heredoc 으로 직접 기록 → BOM 없음
+cat > "$PLUGIN_ROOT/plugin.json" <<'JSON'
+{
+  "name": "make-learn-plugin",
+  "version": "1.0.0",
+  "description": "학습자료로 수업용 웹앱 게임을 만들어 주는 make-learn 스킬",
+  "author": "gkgk545"
+}
+JSON
+installed+=("Antigravity      → $PLUGIN_ROOT/  (plugin.json + skills/make-learn, 호출: /make-learn)")
 
 echo ""
 echo "✅ 설치 완료!"

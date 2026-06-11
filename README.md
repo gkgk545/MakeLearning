@@ -54,7 +54,7 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 |---|---|---|
 | Claude Code | `~/.claude/skills/make-learn/` | `/make-learn` |
 | ChatGPT Codex | `~/.codex/skills/make-learn/` | `/make-learn` 또는 `$make-learn` |
-| Google Antigravity | `~/.gemini/antigravity/skills/make-learn/` | `/make-learn` |
+| Google Antigravity | `~/.gemini/config/plugins/make-learn-plugin/` (plugin.json + `skills/make-learn/`) | `/make-learn` |
 
 설치 후 사용 중인 프로그램을 **완전히 종료했다가 다시 실행**한 뒤 `/make-learn` + 학습자료를 입력하세요. 자세한 안내(비개발자용): [docs/INSTALL.md](docs/INSTALL.md)
 

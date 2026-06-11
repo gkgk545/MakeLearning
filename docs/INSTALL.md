@@ -55,4 +55,4 @@
 새 버전 ZIP을 받아 압축을 풀고 설치를 한 번 더 실행하면 덮어쓰기됩니다.
 
 **Q. 삭제하려면?**
-다음 폴더를 지우면 됩니다: `~/.make-learn`, `~/.claude/skills/make-learn`, `~/.codex/skills/make-learn`, `~/.gemini/antigravity/skills/make-learn` (예전 버전을 쓰셨다면 `~/.gemini/antigravity/global_workflows/make-learn.md`도 함께 삭제)
+다음 폴더를 지우면 됩니다: `~/.make-learn`, `~/.claude/skills/make-learn`, `~/.codex/skills/make-learn`, `~/.gemini/config/plugins/make-learn-plugin` (예전 버전을 쓰셨다면 `~/.gemini/antigravity/skills/make-learn`, `~/.gemini/antigravity/global_workflows/make-learn.md`도 함께 삭제)
