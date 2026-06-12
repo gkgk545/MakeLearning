@@ -79,9 +79,9 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 | 6. 검증 | 검증 루브릭 전 항목 점검, 불합격 시 수정 후 재검증 |
 | 7. 반환 | 파일 + 사용법 + 공유 방법 안내 |
 
-## 지원 게임 유형 (7종 + 자유 설계)
+## 지원 게임 유형 (11종 + 자유 설계)
 
-`skill/make-learn/core/game-patterns/`에 7가지 게임 유형이 정의되어 있으며, 자료 성격에 맞는 패턴을 선택하거나 자유 설계합니다.
+`skill/make-learn/core/game-patterns/`에 11가지 게임 유형이 정의되어 있으며, 자료 성격에 맞는 패턴을 선택하거나 자유 설계합니다.
 
 | 유형 | 패턴 파일 | 어울리는 내용 |
 |---|---|---|
@@ -92,6 +92,10 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 | 팀 대항 점수판 | `05-team-battle.md` | 단원 마무리 모둠 대항전 (TV·전자칠판) |
 | 낱말·빈칸 채우기 | `06-word.md` | 핵심 용어·표현 암기 |
 | 말판 보드게임 | `07-board.md` | 놀이성 있는 모둠 복습 |
+| 학습 빙고 | `08-bingo.md` | 용어·짧은 정답으로 빙고판 완성 |
+| 방탈출 미션 | `09-escape.md` | 단원 전체 종합 복습 (스토리·자물쇠) |
+| 힌트 추리 | `10-deduction.md` | 힌트를 좁혀가며 정답 추리 (다섯고개) |
+| 표적 사냥 | `11-target.md` | 맞는 것/틀린 것 변별 (맞춤법·철자·OX) |
 
 ## 저장소 구조
 
@@ -105,7 +109,7 @@ make-learn/
 │       ├── design-guide.md       #   5단계 제작 규칙(단일 파일·학교급별 톤 등)
 │       ├── verify-rubric.md      #   6단계 검증 루브릭
 │       ├── share-guide.md        #   7단계 공유·문항 수정 안내
-│       └── game-patterns/        #   게임 유형별 화면 흐름·데이터 스키마 (7종)
+│       └── game-patterns/        #   게임 유형별 화면 흐름·데이터 스키마 (11종)
 ├── harness/                      # 품질 검증 하네스 (교과별 샘플 6종, 합격 기준, 테스트 절차)
 ├── docs/INSTALL.md               # 선생님용 설치 가이드
 ├── install.sh / install.ps1      # 설치 스크립트 (macOS·Linux / Windows)
