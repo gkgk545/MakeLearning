@@ -29,22 +29,21 @@ mkdir -p "$HOME/.codex/skills/make-learn"
 cp -R "$SKILL_SRC/." "$HOME/.codex/skills/make-learn/"
 installed+=("Codex            → ~/.codex/skills/make-learn/   (호출: /make-learn 또는 \$make-learn)")
 
-# 4) Antigravity (Gemini) 플러그인
-#    ~/.gemini/config/plugins/<플러그인>/ 아래에서 로드되므로, plugin.json 으로 등록하고
-#    스킬은 skills/<스킬>/ 하위에 둔다. plugin.json 은 반드시 BOM 없는 표준 UTF-8 로 기록한다.
-PLUGIN_ROOT="$HOME/.gemini/config/plugins/make-learn-plugin"
-mkdir -p "$PLUGIN_ROOT/skills/make-learn"
-cp -R "$SKILL_SRC/." "$PLUGIN_ROOT/skills/make-learn/"
-# heredoc 으로 직접 기록 → BOM 없음
-cat > "$PLUGIN_ROOT/plugin.json" <<'JSON'
-{
-  "name": "make-learn-plugin",
-  "version": "1.0.0",
-  "description": "학습자료로 수업용 웹앱 게임을 만들어 주는 make-learn 스킬",
-  "author": "gkgk545"
-}
-JSON
-installed+=("Antigravity      → $PLUGIN_ROOT/  (plugin.json + skills/make-learn, 호출: /make-learn)")
+# 4) Gemini CLI 확장 (Antigravity 포함)
+#    gemini-extension.json 이 있는 폴더를 `gemini extensions link` 로 등록한다.
+#    Antigravity 전역 워크플로우는 ~/.gemini/antigravity/global_workflows/ 에 복사한다.
+AGYW_DIR="$HOME/.gemini/antigravity/global_workflows"
+mkdir -p "$AGYW_DIR"
+cp "$SRC_DIR/adapters/antigravity/make-learn.md" "$AGYW_DIR/make-learn.md"
+# Gemini CLI 확장 등록 (gemini CLI 가 있을 때만)
+if command -v gemini &>/dev/null; then
+  echo "Y" | gemini extensions link "$SKILL_SRC" 2>/dev/null && \
+    installed+=("Gemini CLI 확장  → $(gemini extensions list 2>/dev/null | grep make-learn | head -1 | awk '{print $3}')  (호출: /make-learn)") || \
+    installed+=("Gemini CLI 확장  → 수동 등록 필요: gemini extensions link $(pwd)/skill/make-learn")
+else
+  installed+=("Gemini CLI 확장  → gemini CLI 없음 — 설치 후 gemini extensions link skill/make-learn 실행")
+fi
+installed+=("Antigravity WF   → $AGYW_DIR/make-learn.md  (호출: /make-learn)")
 
 echo ""
 echo "✅ 설치 완료!"
